@@ -8,8 +8,14 @@ import assert from 'power-assert'
 describe('HuffCoder', function () {
   it('receive char', function () {
     let huffCoder = new HuffCoder()
-    huffCoder.receiveChar('æ')
+    huffCoder.receiveChar(Symbol.for('NEW'))
     huffCoder.receiveChar('a')
-    assert(huffCoder.loopUp('a') === 1)
+    huffCoder.receiveChar('a')
+    huffCoder.receiveChar(Symbol.for('NEW'))
+    huffCoder.receiveChar('d')
+    console.log(huffCoder._treeRoot.path)
+    console.log(huffCoder._treeRoot.left.path)
+    assert(huffCoder.loopUp('a') === '1')
+    assert(huffCoder.loopUp('d') === '01')
   })
 })

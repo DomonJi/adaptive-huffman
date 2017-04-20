@@ -11,17 +11,17 @@ class HuffNode {
   }
 
   get path() {
-    return this.parent ? this.parent.path + this.parent.right === this ? '1' : '0' : ''
+    return this.parent ? this.parent.path + (this.parent.right === this ? '1' : '0') : ''
   }
 }
 
 export default class HuffCoder {
-  constructor(charForNew = 'æ', defaultRule) {
+  constructor(defaultRule) {
     this._treeRoot = new HuffNode(0)
     this._NYT = this._treeRoot
-    this._nextNew = false
+    this._receivingNew = false
     this._dict = {}
-    this._dict[charForNew] = this._NYT
+    this._dict[Symbol.for('NEW')] = this._NYT
     this.defaultRule = defaultRule || (c => {
         let code = Array.from({length: 16}, () => 0).join('') + c.toString().charCodeAt().toString(2)
         return code.substr(code.length - 16)
@@ -33,16 +33,18 @@ export default class HuffCoder {
   }
 
   receiveChar(char) {
-    if (this._dict[char] === this._NYT) {
-      this._nextNew && throwError('Duplicated NEW signal')
+    if (char === Symbol.for('NEW')) {
+      this._receivingNew && throwError('Duplicated NEW signal')
       this._NYT.left = new HuffNode(0, this._NYT)
-      this._nextNew = true
+      this._receivingNew = true
+      return
     }
-    if (this._nextNew) {
+    if (this._receivingNew) {
       this._NYT.right = new HuffNode(0, this._NYT)
+      this._dict[char] = this._NYT.right
       this._updateTree(char)
       this._NYT = this._NYT.left
-      this._nextNew = false
+      this._receivingNew = false
     } else {
       this._updateTree(char)
     }
@@ -50,17 +52,13 @@ export default class HuffCoder {
 
   // increase weight and _swap nodes
   _updateTree(c) {
-    let current
-    if (this._nextNew) {
-      current = this._NYT.right
-      this._dict[c] = this._NYT.right
-    } else {
-      current = this._dict[c]
-    }
-    while (current.parent) {
-      let lastNodeOfN = this._findLastNodeOfWeight(current.weight++)
-      lastNodeOfN && HuffCoder._swap(lastNodeOfN, current)
-      current.parent.weight++ && (current = current.parent)
+    let current = this._dict[c]
+    while (current) {
+      let lastNodeOfN = this._findLastNodeOfWeight(current.weight)
+      if (lastNodeOfN && lastNodeOfN !== current && lastNodeOfN !== current.parent)
+        HuffCoder._swap(lastNodeOfN, current)
+      current.weight++
+      current = current.parent
     }
   }
 

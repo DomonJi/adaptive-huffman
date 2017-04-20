@@ -29,7 +29,7 @@ export default class HuffCoder {
   }
 
   loopUp(char) {
-    return this._dict[char].path || this.defaultRule(char)
+    return this._dict[char] && this._dict[char].path || this.defaultRule(char)
   }
 
   receiveChar(char) {

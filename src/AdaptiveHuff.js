@@ -23,6 +23,7 @@ export default class HuffCoder {
     this._dict = {}
     this._dict[Symbol.for('NEW')] = this._NYT
     this.defaultRule = defaultRule || (c => {
+        if (c === Symbol.for('NEW')) return '0'
         let code = Array.from({length: 16}, () => 0).join('') + c.toString().charCodeAt().toString(2)
         return code.substr(code.length - 16)
       })

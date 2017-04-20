@@ -3,7 +3,7 @@
  */
 
 class HuffNode {
-  constructor(weight, parent) {
+  constructor(weight = 0, parent) {
     this.weight = weight
     this.parent = parent
     this.left = null
@@ -35,20 +35,15 @@ export default class HuffCoder {
 
   receiveChar(char) {
     if (char === Symbol.for('NEW')) {
-      this._receivingNew && throwError('Duplicated NEW signal')
       this._NYT.left = new HuffNode(0, this._NYT)
       this._receivingNew = true
-      return
     }
-    if (this._receivingNew) {
-      this._NYT.right = new HuffNode(0, this._NYT)
-      this._dict[char] = this._NYT.right
+    else if (this._receivingNew) {
+      this._dict[char] = this._NYT.right = new HuffNode(0, this._NYT)
       this._updateTree(char)
-      this._NYT = this._NYT.left
+      this._dict[Symbol.for('NEW')] = this._NYT = this._NYT.left
       this._receivingNew = false
-    } else {
-      this._updateTree(char)
-    }
+    } else this._updateTree(char)
   }
 
   // increase weight and _swap nodes
@@ -64,20 +59,23 @@ export default class HuffCoder {
   }
 
   _findLastNodeOfWeight(n) {
-    function visit(node) {
+    return (function visit(node) {
       if (!node) return null
       if (node.weight === n) return node
       return visit(node.right) || visit(node.left)
-    }
-
-    return visit(this._treeRoot)
+    })(this._treeRoot)
   }
 
-  static _swap(node1, node2) {
-    node1.parent.right === node1 ? node1.parent.right = node2 : node1.parent.left = node2
-    node2.parent.right === node2 ? node2.parent.right = node1 : node2.parent.left = node1
-    const temp = node1.parent
-    node1.parent = node2.parent
-    node2.parent = temp
+  static _swap(lastOfN, current) {
+    if (lastOfN.parent === current.parent) {
+      current.parent.right = current
+      current.parent.left = lastOfN
+      return
+    }
+    lastOfN.parent.right === lastOfN ? lastOfN.parent.right = current : lastOfN.parent.left = current
+    current.parent.right === current ? current.parent.right = lastOfN : current.parent.left = lastOfN
+    const temp = lastOfN.parent
+    lastOfN.parent = current.parent
+    current.parent = temp
   }
 }

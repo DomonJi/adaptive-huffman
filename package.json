@@ -4,7 +4,8 @@
   "description": "JS implementation of adaptive-huffman",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --compilers js:babel-core/register",
+    "build": "babel --presets=es2015 src/ -d dist/ --no-babelrc"
   },
   "repository": {
     "type": "git",

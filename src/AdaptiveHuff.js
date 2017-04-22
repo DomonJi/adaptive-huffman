@@ -28,8 +28,7 @@ export default class HuffCoder {
     if (this._dict[c]) {
       var code = this._dict[c].path
       this._updateTree(c)
-    }
-    else {
+    } else {
       code = (this._NYT.path || '0') + this.defaultCode(c)
       this._NYT.left = new HuffNode(0, this._NYT)
       this._dict[c] = this._NYT.right = new HuffNode(0, this._NYT)
@@ -39,32 +38,23 @@ export default class HuffCoder {
     return code
   }
 
-  // increase weight and swap nodes
-  _updateTree(c) {
-    let cur = this._dict[c]
-    while (cur) {
-      let rightmost = this._rightmostOfWeight(cur.weight)
-      ![null,cur,cur.parent].includes(rightmost) && HuffCoder._swap(rightmost,cur)
-      cur.weight++ && (cur = cur.parent)
+  _updateTree(c) { // increase weight and swap nodes
+    for (let p = this._dict[c]; p; p.weight++, p = p.parent) {
+      let leader = this._leaderOfWeight(p.weight)
+      ![null, p, p.parent].includes(leader) && HuffCoder._swap(leader, p)
     }
   }
 
-  _rightmostOfWeight(w) {
-    return (function visit(node) {
-      if (!node) return null
-      if (node.weight === w) return node
-      return visit(node.right) || visit(node.left)
+  _leaderOfWeight(w) {
+    return (function visit(n) {
+      return n ? n.weight === w ? n : visit(n.right) || visit(n.left) : null
     })(this._treeRoot)
   }
 
-  static _swap(row, cur) {
-    if (row.parent === cur.parent) {
-      cur.parent.right = cur
-      cur.parent.left = row
-      return
-    }
-    row.parent.right === row ? row.parent.right = cur : row.parent.left = cur
-    cur.parent.right === cur ? cur.parent.right = row : cur.parent.left = row
-    row.parent = [cur.parent, cur.parent = row.parent][0]
+  static _swap(leader, p) {
+    const temp = p.parent.right // prevent p and leader are siblings
+    leader.parent.right === leader ? leader.parent.right = p : leader.parent.left = p
+    temp === p ? p.parent.right = leader : p.parent.left = leader
+    leader.parent = [p.parent, p.parent = leader.parent][0]
   }
 }

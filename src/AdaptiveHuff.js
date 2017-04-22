@@ -38,7 +38,7 @@ export default class HuffCoder {
     return code
   }
 
-  _updateTree(c) { // increase weight and swap nodes
+  _updateTree(c) {            // increase weight and swap nodes
     for (let p = this._dict[c]; p; p.weight++, p = p.parent) {
       let leader = this._leaderOfWeight(p.weight)
       ![null, p, p.parent].includes(leader) && HuffCoder._swap(leader, p)
@@ -52,7 +52,7 @@ export default class HuffCoder {
   }
 
   static _swap(leader, p) {
-    const temp = p.parent.right // prevent p and leader are siblings
+    const temp = p.parent.right           // prevent p and leader are siblings
     leader.parent.right === leader ? leader.parent.right = p : leader.parent.left = p
     temp === p ? p.parent.right = leader : p.parent.left = leader
     leader.parent = [p.parent, p.parent = leader.parent][0]

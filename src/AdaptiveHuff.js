@@ -16,11 +16,11 @@ class HuffNode {
 
 export default class HuffCoder {
   constructor(defaultCode) {
-    this._NYT = this._treeRoot = new HuffNode()
+    this._NYT = this._root = new HuffNode()
     this._dict = {}
     this.defaultCode = defaultCode || (c => {
-        let code = Array.from({length: 16}, _ => 0).join('') + c.charCodeAt().toString(2)
-        return code.substr(code.length - 16)
+        let code = Array.from({length: 8}, _ => 0).join('') + c.charCodeAt().toString(2)
+        return code.substr(code.length - 8)
       })
   }
 
@@ -41,14 +41,14 @@ export default class HuffCoder {
   _updateTree(c) {            // increase weight and swap nodes
     for (let p = this._dict[c]; p; p.weight++, p = p.parent) {
       let leader = this._leaderOfWeight(p.weight)
-      ![null, p, p.parent].includes(leader) && HuffCoder._swap(leader, p)
+      ![p, p.parent, undefined].includes(leader) && HuffCoder._swap(leader, p)
     }
   }
 
   _leaderOfWeight(w) {
-    return (function visit(n) {
-      return n ? n.weight === w ? n : visit(n.right) || visit(n.left) : null
-    })(this._treeRoot)
+    for (let q = [this._root], p; p = q.shift(); p.left && q.push(p.right, p.left)) {
+      if (p.weight === w) return p
+    }
   }
 
   static _swap(leader, p) {

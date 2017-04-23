@@ -1,9 +1,8 @@
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = encode;
+var _fs = require('fs');
+
+var _fs2 = _interopRequireDefault(_fs);
 
 var _AdaptiveHuff = require('./AdaptiveHuff');
 
@@ -15,16 +14,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * Created by Domon on 17/4/18.
  */
 
-var fs = require('fs');
-function encode(filePath, output) {
-  var coder = new _AdaptiveHuff2.default();
-  var rs = fs.createReadStream(filePath);
-  var ws = fs.createWriteStream(output);
-  rs.on('readable', function () {
-    var chunk = void 0;
-    while (chunk = rs.read(1)) {
-      ws.write(coder.encode(chunk.toString()));
-    }
-  });
-}
-encode('./static/input.txt', './static/output.txt');
+var coder = new _AdaptiveHuff2.default();
+var rs = _fs2.default.createReadStream('./static/input.txt');
+var ws = _fs2.default.createWriteStream('./static/output.txt');
+rs.on('readable', function () {
+  var chunk = void 0;
+  while (chunk = rs.read(1)) {
+    ws.write(coder.encode(chunk.toString()));
+  }
+});

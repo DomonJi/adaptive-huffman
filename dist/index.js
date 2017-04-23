@@ -18,8 +18,5 @@ var coder = new _AdaptiveHuff2.default();
 var rs = _fs2.default.createReadStream('./static/input.txt');
 var ws = _fs2.default.createWriteStream('./static/output.txt');
 rs.on('readable', function () {
-  var chunk = void 0;
-  while (chunk = rs.read(1)) {
-    ws.write(coder.encode(chunk.toString()));
-  }
+  for (var chunk; chunk = rs.read(1); ws.write(coder.encode(chunk.toString()))) {}
 });

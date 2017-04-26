@@ -25,9 +25,8 @@ export default class HuffCoder {
   }
 
   encode(c) {
-    if (this._dict[c]) {
-      var code = this._dict[c].path
-    } else {
+    if (this._dict[c]) var code = this._dict[c].path
+    else {
       code = (this._NYT.path || '0') + this.defaultCode(c)
       this._dict[c] = this._NYT.right = new HuffNode(0, this._NYT)
       this._NYT = this._NYT.left = new HuffNode(0, this._NYT)

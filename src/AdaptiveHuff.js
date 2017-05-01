@@ -1,7 +1,3 @@
-/**
- * Created by Domon on 17/4/18.
- */
-
 class HuffNode {
   constructor(weight = 0, parent) {
     this.weight = weight

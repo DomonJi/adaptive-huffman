@@ -1,7 +1,8 @@
 # adaptive-huffman
 > A simple implementation of adaptive huffman coding algorithm in Javascript
 
-## Usage
+
+## Usage (only encoding)
 
 ```js
 import HuffCoder from './dist/AdaptiveHuff'

@@ -14,10 +14,7 @@ export default class HuffCoder {
   constructor(defaultCode) {
     this._NYT = this._root = new HuffNode()
     this._dict = {}
-    this.defaultCode = defaultCode || (c => {
-        let code = Array.from({length: 8}, _ => 0).join('') + c.charCodeAt().toString(2)
-        return code.substr(code.length - 8)
-      })
+    this.defaultCode = defaultCode || (c => c.charCodeAt().toString(2).padStart(8, '0'))
   }
 
   encode(c) {
